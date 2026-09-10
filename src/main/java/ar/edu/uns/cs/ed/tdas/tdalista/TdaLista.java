@@ -2,11 +2,13 @@ package ar.edu.uns.cs.ed.tdas.tdalista;
 import ar.edu.uns.cs.ed.tdas.tdalista.PositionList;
 
 import org.w3c.dom.traversal.NodeIterator;
+import java.util.Iterator;
 
 import ar.edu.uns.cs.ed.tdas.Position;
 import ar.edu.uns.cs.ed.tdas.tdalista.Dnodo;
 import ar.edu.uns.cs.ed.tdas.excepciones.EmptyListException;
 import ar.edu.uns.cs.ed.tdas.excepciones.InvalidPositionException;
+import ar.edu.uns.cs.ed.tdas.excepciones.BoundaryViolationException;
 
 public class TdaLista<E> implements PositionList<E> {
     protected int cantel;
@@ -38,6 +40,7 @@ public class TdaLista<E> implements PositionList<E> {
         else throw new EmptyListException("Lista Vacia!!!");
     }
 
+    @SuppressWarnings("unchecked") 
     public Position<E> last(){
         if (!isEmpty()){
             return cola.getAnterior();
@@ -47,7 +50,7 @@ public class TdaLista<E> implements PositionList<E> {
 
     protected Dnodo<E> checkPosition(Position<E> p){
         if(isEmpty()){
-            throw new EmptyListException("Lista vacia!!");
+            throw new InvalidPositionException("Lista vacia!!");
         }
         if (p==null){
             throw new InvalidPositionException("Posicion no existente");
@@ -57,8 +60,8 @@ public class TdaLista<E> implements PositionList<E> {
         catch (ClassCastException e){
             throw new InvalidPositionException("no es un nodo");
         }
-        if(nodo == cabecera || nodo == cola){
-            throw new InvalidPositionException("la posicion es la cabezera o la cola");
+        if(nodo== cola || nodo == cabecera){
+            throw new BoundaryViolationException("la posicion es la cabezera o la cola");
         }
         return nodo;
 
@@ -67,12 +70,14 @@ public class TdaLista<E> implements PositionList<E> {
     @SuppressWarnings("unchecked")
     public Position<E> prev(Position<E> p) throws InvalidPositionException, EmptyListException{
         Dnodo<E> nodoc = checkPosition(p);
+        if(nodoc.getAnterior() == cabecera) throw new BoundaryViolationException("la anterior es la cabecera");
         return nodoc.getAnterior();
     }
 
     @SuppressWarnings("unchecked")
-    public Position<E> next(Position<E> p) throws InvalidPositionException, EmptyListException{
+    public Position<E> next(Position<E> p) throws InvalidPositionException, EmptyListException, BoundaryViolationException{
         Dnodo<E> nodoc = checkPosition(p);
+        if(nodoc.getSiguiente() == cola) throw new BoundaryViolationException("el siguiente es la cola");
         return nodoc.getSiguiente();
     }
 
@@ -82,15 +87,19 @@ public class TdaLista<E> implements PositionList<E> {
         Dnodo<E> sigactual = cabecera.getSiguiente();
         cabecera.setSiguiente(nodoc);
         nodoc.setSiguiente(sigactual);
+        nodoc.setAnterior(cabecera);
+        sigactual.setAnterior(nodoc);
         cantel++;
     }
 
     @SuppressWarnings("unchecked")
     public void addLast(E p) throws InvalidPositionException{
-        Dnodo<E> nodoc = new Dnodo<E>(p)
+        Dnodo<E> nodoc = new Dnodo<E>(p);
         Dnodo<E> antactual = cola.getAnterior();
         cola.setAnterior(nodoc);
         nodoc.setAnterior(antactual);
+        nodoc.setSiguiente(cola);
+        antactual.setSiguiente(nodoc);
         cantel++;
     }
     
@@ -122,7 +131,8 @@ public class TdaLista<E> implements PositionList<E> {
         cantel++;
     }
 
-    public E remove(Position<E> p){
+    @SuppressWarnings("unchecked")
+    public E remove(Position<E> p) throws InvalidPositionException, EmptyListException{
         Dnodo<E> nodo = checkPosition(p);
         Dnodo<E> nodoanterior = nodo.getAnterior();
         Dnodo<E> nodosiguiente = nodo.getSiguiente();
@@ -137,6 +147,21 @@ public class TdaLista<E> implements PositionList<E> {
         E eliminado = nodoeliminado.element();
         nodoeliminado.setElem(el);
         return eliminado;
+    }
+    public Iterator<E> iterator(){
+        return new IteradorPL<E>(this);
+    }
+    @SuppressWarnings("unchecked")
+    public Iterable<Position<E>> positions(){
+        PositionList<Position<E>> pl = new TdaLista<Position<E>>();
+        if(cantel!=0){
+            Dnodo<E> n = cabecera.getSiguiente();
+            while(n!= cola){
+                pl.addLast(n);
+                n=n.getSiguiente();
+            }
+        }
+        return pl;
     }
 
     
