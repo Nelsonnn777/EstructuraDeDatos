@@ -1,11 +1,11 @@
 package ar.edu.uns.cs.ed.tdas.tdalista;
 
+import java.security.DomainLoadStoreParameter;
 import java.util.Iterator;
 import java.util.NoSuchElementException;
 
 import ar.edu.uns.cs.ed.tdas.Position;
 import ar.edu.uns.cs.ed.tdas.excepciones.*;
-import ar.edu.uns.cs.ed.tdas.excepciones.EmptyListException;
 
 public class IteradorPL<E> implements Iterator<E> {
         
@@ -45,11 +45,41 @@ public class IteradorPL<E> implements Iterator<E> {
     }
     public boolean ej3a(E e1){
         boolean esta = false;
-        if(cursor!= null){
-            while(!esta && n!=)
-        }
+            while(this.hasNext() && !esta){
+                esta = this.next().equals(e1);
+            }
+            return esta;
     }
-
-
-
+    
+    public int ej3b(E e1){
+        int cant = 0;
+            while(this.hasNext()){
+                if(this.next().equals(e1)){
+                    cant++;
+                }
+            }
+            return cant;
+    }
+    public boolean ej3c(E e1, int n){
+        int cant = 0;
+            while(this.hasNext()){
+                if(this.next().equals(e1) && n >= cant){
+                    cant++;
+                }
+            }
+            return cant == n;
+    }
+    public PositionList<E> ej4(PositionList<E> pl){
+        PositionList<E> listaret = new TdaLista<E>();
+        for(E elemento : pl){
+            listaret.addLast(elemento);
+            listaret.addLast(elemento);
+        }
+        return listaret;
+    }
+    
 }
+
+
+
+
