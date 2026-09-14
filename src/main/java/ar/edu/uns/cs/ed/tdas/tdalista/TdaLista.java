@@ -180,6 +180,20 @@ public class TdaLista<E> implements PositionList<E> {
 
     }
 
+    public TdaLista<E> dividirlista(TdaLista<E> l, Position<E> p){
+        Position<E> paux = p;
+        Position<E> eliminar;
+        TdaLista<E> toret = new TdaLista<>();
+        while(l.next(paux) != cola){
+            eliminar = paux;
+            toret.addLast(paux.element());
+            paux = l.next(paux);
+            l.remove(eliminar);
+
+        }
+        return toret;
+    }
+
 
 
     
