@@ -107,6 +107,44 @@ public class ejerciciostp4 {
         }
 
     }
-} 
+
+    public static Iterable<Character> soloVocales(PositionList<Character> list, int n){
+        PositionList<Character> p = new TdaLista<Character>();
+        char[] vocales = {'u','o','i','e','a'};
+        Iterator<Character> it = list.iterator();
+        int cont = 0;
+        while (cont != n && it.hasNext() ) {
+            boolean enc = false;
+            Character m = it.next();
+            for(int i = 0; !enc && i<5; i++  ){
+                if (m.equals(vocales[i])){
+                    enc = true;
+                    cont++;
+                    p.addLast(vocales[i]);
+                }
+            }
+        }
+        return p;
+        
+    }
+    
+    public static Iterable<Position<Character>> nPrimeraPos(PositionList<Character> pl, Character c, int n){
+        PositionList<Position<Character>> toret = new TdaLista<Position<Character>>();
+        Iterable<Position<Character>> pos = pl.positions();
+        int cont= 0;
+        for(Position<Character> p : pos){
+            if(p.equals(c)){
+                toret.addLast(p);
+                cont++;
+            }
+            if(cont==n){
+                break;
+            }
+        }
+        return toret;
+        
+    }
     
 
+
+} 

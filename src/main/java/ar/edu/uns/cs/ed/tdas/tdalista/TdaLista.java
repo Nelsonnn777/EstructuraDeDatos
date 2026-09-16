@@ -194,9 +194,27 @@ public class TdaLista<E> implements PositionList<E> {
         return toret;
     }
 
+    public int superEliminar(E elem) throws EmptyListException{
+        int cont = 0;
+        Position<E> cursor = cabecera.getSiguiente();
+        if(cursor == cola) throw new EmptyListException("lista vacia");
+        while (cursor != cola){
+            if (cursor.element().equals(elem)){
+                Position<E> borrar = cursor;
+                cursor = this.next(cursor);
+                this.remove(borrar);
+                cont++;
+            }
+            else cursor = this.next(cursor);
+
+        }
+        return cont;
+    }
+    }
+
 
 
     
 
 
-}
+
