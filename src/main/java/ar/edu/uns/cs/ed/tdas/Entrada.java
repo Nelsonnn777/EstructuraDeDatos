@@ -17,6 +17,6 @@ public void setKey( K c ) {
 public void setValue(V v) {
     valor = v;
 }
-public String toString( ) { // Para mostrar entradas
+public String toString( ) { 
 return "(" + getKey() + "," + getValue() + ")" ; }
 }
