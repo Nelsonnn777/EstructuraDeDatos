@@ -11,9 +11,6 @@ public K getKey() {
 public V getValue() {
     return valor;
 }
-public void setKey( K c ) {
-    clave = c;
-} // Setters
 public void setValue(V v) {
     valor = v;
 }
