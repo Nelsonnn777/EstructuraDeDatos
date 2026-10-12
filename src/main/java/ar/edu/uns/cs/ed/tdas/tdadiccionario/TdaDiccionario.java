@@ -30,13 +30,13 @@ public class TdaDiccionario<K,V> implements Dictionary<K,V>{
         return cant==0;
     }
 
-    private int reHash(K key){
+    private int Hash(K key){
         return key.hashCode()%N;
     }
     public Entry<K,V> find(K key){
         if(key == null) throw new InvalidKeyException("key invalida");
         Entry<K,V> toret = null;
-        int hashkey = reHash(key);
+        int hashkey = Hash(key);
         for (Entrada<K,V> entrada : buckets[hashkey]) {
             if(key.equals(entrada.getKey())){
                 toret = entrada;
@@ -48,7 +48,7 @@ public class TdaDiccionario<K,V> implements Dictionary<K,V>{
 
     public PositionList<Entry<K,V>> findAll(K key){
         if(key == null){ throw new InvalidKeyException("llave invalida");}
-        int hashkey = reHash(key);
+        int hashkey = Hash(key);
         PositionList<Entry<K,V>> toret = new TdaLista<Entry<K,V>>();
         for (Entry<K,V> entrada : buckets[hashkey]) {
             if(key.equals(entrada.getKey())){
@@ -62,7 +62,7 @@ public class TdaDiccionario<K,V> implements Dictionary<K,V>{
     public Entry<K,V> insert(K key, V value){
         if(key == null){ throw new InvalidKeyException("llave invalida");}
         Entrada<K,V> nuevo = new Entrada<K,V>(key,value);
-        int hashkey = reHash(key);
+        int hashkey = Hash(key);
         buckets[hashkey].addLast(nuevo); 
         cant++;  
         return nuevo;
@@ -70,7 +70,7 @@ public class TdaDiccionario<K,V> implements Dictionary<K,V>{
 
     public Entry<K,V> remove(Entry<K,V> en){
         if(en == null || en.getKey()== null){throw new InvalidEntryException("invalido");}
-        int hashkey = reHash(en.getKey());
+        int hashkey = Hash(en.getKey());
         Entry<K,V> toret = null;
         for (Position<Entrada<K,V>> entradas : buckets[hashkey].positions()) {
             if(entradas.element().equals(en)){

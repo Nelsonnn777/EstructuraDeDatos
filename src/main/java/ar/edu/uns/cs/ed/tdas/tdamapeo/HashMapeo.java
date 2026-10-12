@@ -30,13 +30,13 @@ public class HashMapeo<K,V> implements Map<K,V> {
     public boolean isEmpty(){
         return cant == 0;
     }
-    private int reHash(K key){
+    private int Hash(K key){
         return key.hashCode()%N;
     }
     public V get(K key) {
         
         if(key== null){ throw new InvalidKeyException("llave invalida");}
-        int hashkey = reHash(key);
+        int hashkey = Hash(key);
         Iterator<Entrada<K,V>> it = bucket[hashkey].iterator();
         V valor = null;
         boolean enc = false;
@@ -52,7 +52,7 @@ public class HashMapeo<K,V> implements Map<K,V> {
     }
     public V put(K key, V valor) throws InvalidKeyException{
         if(key== null){ throw new InvalidKeyException("llave invalida");}
-        int hashkey = reHash(key);
+        int hashkey = Hash(key);
         V val = null;
         boolean enc = false;
         for (Position<Entrada<K,V>> en : bucket[hashkey].positions()) {
@@ -102,7 +102,7 @@ public class HashMapeo<K,V> implements Map<K,V> {
     }
     public V remove(K key){
         if(key== null){ throw new InvalidKeyException("llave invalida");}
-        int hashkey = reHash(key);
+        int hashkey = Hash(key);
         V valor = null;
         for (Position<Entrada<K,V>> entrada : bucket[hashkey].positions()) {
             if(entrada.element().getKey().equals(key)){
