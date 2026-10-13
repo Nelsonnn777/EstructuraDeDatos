@@ -4,6 +4,7 @@ import java.util.Iterator;
 
 import ar.edu.uns.cs.ed.tdas.Position;
 import ar.edu.uns.cs.ed.tdas.tdalista.PositionList;
+import ar.edu.uns.cs.ed.tdas.tdalista.TdaLista;
 import ar.edu.uns.cs.ed.tdas.excepciones.*;
 
 public class TdaArbol<E> implements Tree<E> {
@@ -190,13 +191,34 @@ public class TdaArbol<E> implements Tree<E> {
 
     @Override
     public Iterator<E> iterator() {
-        Iterator<Position<E>> it =raiz.hijos().iterator();
-        return it;
+        PositionList<E> lista = new TdaLista<E>();
+        for (Position<E> position : positions()) {
+            lista.addLast(position.element());
+        }
+        return lista.iterator();
     }
     @Override
     public Iterable<Position<E>> positions() {
-        // TODO Auto-generated method stub
-        return null;
+        // visita
+        PositionList<Position<E>> pos = new TdaLista<Position<E>>();
+        pos.addLast(raiz);
+        for(Position<E> p : raiz.hijos()){
+            guardarPreOrden(pos, p);
+        }
+        return pos;
+    }
+
+    private void guardarPreOrden(PositionList<Position<E>> l, Position<E> p){
+        //visita 
+        PositionList<Position<E>> toret = l;
+        TNodo<E> pc = checkPosition(p);
+        toret.addLast(p);
+        if(isInternal(p)){
+            for(Position<E> h : pc.hijos()){
+                guardarPreOrden(toret, h);
+            }
+        }
+        
     }
 
 
