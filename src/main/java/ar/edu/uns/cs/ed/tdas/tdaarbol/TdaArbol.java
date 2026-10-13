@@ -188,6 +188,17 @@ public class TdaArbol<E> implements Tree<E> {
         }
     }
 
+    @Override
+    public Iterator<E> iterator() {
+        Iterator<Position<E>> it =raiz.hijos().iterator();
+        return it;
+    }
+    @Override
+    public Iterable<Position<E>> positions() {
+        // TODO Auto-generated method stub
+        return null;
+    }
+
 
 
     
