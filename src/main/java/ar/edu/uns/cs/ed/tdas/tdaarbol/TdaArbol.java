@@ -25,17 +25,20 @@ public class TdaArbol<E> implements Tree<E> {
     }
 
     public void createRoot(E e){
+        if(!isEmpty()){throw new InvalidOperationException("ya hay una raiz");}
         raiz = new TNodo<E>(e, null);
+        cantidad++;
     }
 
     public Position<E> root(){
-        if(raiz != null){
+        if(raiz == null){
             throw new EmptyTreeException("Abrol vacio");
         }
         return raiz;
     }
     protected TNodo<E> checkPosition(Position<E> p) throws InvalidPositionException{
-        if(p== null){throw new InvalidPositionException("posicion nula");}
+        
+        if(isEmpty() || p== null){throw new InvalidPositionException("posicion nula");}
         TNodo<E> nodo;
         try{nodo =(TNodo<E>) p;}
             catch(ClassCastException e){
@@ -102,9 +105,9 @@ public class TdaArbol<E> implements Tree<E> {
     public Position<E> addBefore(Position<E> p, Position<E> rb, E e) {
         TNodo<E> nodo = checkPosition(p);
         Position<Position<E>> pos = null;
-        if(parent(rb) != p){throw new InvalidPositionException("las posiciones no son padre e hijo respectivamente");}
+        if(!parent(rb).equals(p)){throw new InvalidPositionException("las posiciones no son padre e hijo respectivamente");}
         for (Position<Position<E>> hijo : nodo.hijos().positions()) {
-            if(hijo.element() == rb){
+            if(checkPosition(hijo.element()) == checkPosition(rb)){
                 pos = hijo;
                 break;
             }
@@ -118,9 +121,9 @@ public class TdaArbol<E> implements Tree<E> {
     public Position<E> addAfter(Position<E> p, Position<E> lb, E e) {
           TNodo<E> nodo = checkPosition(p);
         Position<Position<E>> pos = null;
-        if(parent(lb) != p){throw new InvalidPositionException("Las posiciones no son padre e hijo respectivamente");}
+        if(!parent(lb).equals(p) ){throw new InvalidPositionException("Las posiciones no son padre e hijo respectivamente");}
         for (Position<Position<E>> hijo : nodo.hijos().positions()) {
-            if(hijo.element() == lb){
+            if(checkPosition(hijo.element()) == checkPosition(lb)){
                 pos = hijo;
                 break;
             }
@@ -136,13 +139,14 @@ public class TdaArbol<E> implements Tree<E> {
         if(isEmpty()){throw new InvalidPositionException("Arbol vacio");}
         TNodo<E> nodo = checkPosition(p);
         if(!nodo.hijos().isEmpty()){ throw new InvalidPositionException("No es un nodo externo");}
-        TNodo<E> padre= checkPosition(nodo.getPadre());
+        if(!isRoot(p)){TNodo<E> padre= checkPosition(nodo.getPadre());
         for(Position<Position<E>> hijos : padre.hijos().positions()){
             if((hijos.element() == p)){
                 padre.hijos().remove(hijos);
                 break;
             }
         }
+        }else{raiz = null;}
         cantidad--;
     }   
 
@@ -169,12 +173,13 @@ public class TdaArbol<E> implements Tree<E> {
             }
             Position<Position<E>> paraeliminar = posicion;
             for(Position<E> h : hijos){
+                checkPosition(h).setPadre(padre);
                 hermanos.addAfter(posicion, h);
                 posicion = hermanos.next(posicion);
             }
             hermanos.remove(paraeliminar);
             cantidad--;
-        }
+        }else{throw new InvalidPositionException("es un nodo externo");}
         
 
     }
@@ -201,10 +206,12 @@ public class TdaArbol<E> implements Tree<E> {
     public Iterable<Position<E>> positions() {
         // visita
         PositionList<Position<E>> pos = new TdaLista<Position<E>>();
+        if(!isEmpty()){
         pos.addLast(raiz);
         for(Position<E> p : raiz.hijos()){
             guardarPreOrden(pos, p);
         }
+    }
         return pos;
     }
 
