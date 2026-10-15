@@ -6,7 +6,7 @@ import ar.edu.uns.cs.ed.tdas.Position;
 import ar.edu.uns.cs.ed.tdas.tdalista.PositionList;
 import ar.edu.uns.cs.ed.tdas.tdalista.TdaLista;
 import ar.edu.uns.cs.ed.tdas.excepciones.*;
-
+import ar.edu.uns.cs.ed.tdas.tdamapeo.HashMapeo;
 public class TdaArbol<E> implements Tree<E> {
     private TNodo<E> raiz;
     private int cantidad;
@@ -228,6 +228,45 @@ public class TdaArbol<E> implements Tree<E> {
         
     }
 
+    // EJERCICIO 2 Tp arboles
+    public void eliminarUltimoHijo(Position<E> p){
+        if(isRoot(p)){ throw new InvalidOperationException("la posicion es la raiz");}
+        TNodo<E> nodo = checkPosition(p);
+        TNodo<E> padre = checkPosition(nodo.getPadre());
+        TNodo<E> ultimohijodepadre = checkPosition(padre.hijos().last().element());
+        if(nodo != ultimohijodepadre){
+            throw new InvalidPositionException("no es el ultimo");
+        }
+        else{ removeNode(nodo);}
+    }
+
+    public static HashMapeo<Character, Integer> cantidadRepeticiones(Tree<Character> t){
+        HashMapeo<Character, Integer> toret = new HashMapeo<>();
+        if(!t.isEmpty()){
+            contarPreOrden(toret, t.root(), t);
+        }
+        
+        return toret;
+    }
+
+    private static void contarPreOrden(HashMapeo<Character,Integer> h, Position<Character> p, Tree<Character> t){
+        // visita
+        if(h.get(p.element()) == null){ h.put(p.element(), 1);}
+        else {
+            int a = h.get(p.element()) +1;
+            h.put(p.element(), a);
+        }
+        // no se
+        if(t.isInternal(p)){   
+            for(Position<Character> hijos : t.children(p)){
+                contarPreOrden(h, hijos, t);
+            }
+        }
+    }
+}
+
+
+
 
 
     
@@ -235,4 +274,4 @@ public class TdaArbol<E> implements Tree<E> {
 
 
 
-}
+
