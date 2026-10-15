@@ -263,6 +263,30 @@ public class TdaArbol<E> implements Tree<E> {
             }
         }
     }
+
+    public static Iterable<Position<String>> ej4(Tree<String> t, String s){
+        PositionList<Position<String>> toret = new TdaLista<Position<String>>();
+        postOrden(toret,t.root(), t);
+        return toret;
+
+    }
+
+    private static void postOrden(PositionList<Position<String>> l, Position<String> p, Tree<String> t){
+        if(t.isInternal(p)){
+            for(Position<String> pos : t.children(p)){
+                postOrden(l, pos, t);
+            }
+        }
+        l.addLast(p);
+    }
+
+    public static <E> void ej5(Tree<E>a  , E e){
+        for(Position<E> pos : a.positions()){
+            if(pos.element()== e){ a.removeNode(pos);}
+        }
+    }
+
+
 }
 
 
