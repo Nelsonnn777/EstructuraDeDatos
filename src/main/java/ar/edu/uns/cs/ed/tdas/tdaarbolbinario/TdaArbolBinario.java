@@ -3,7 +3,10 @@ package ar.edu.uns.cs.ed.tdas.tdaarbolbinario;
 import java.util.Iterator;
 
 import ar.edu.uns.cs.ed.tdas.tdaarbol.Tree;
+
+import ar.edu.uns.cs.ed.tdas.tdadiccionario.TdaDiccionario;
 import ar.edu.uns.cs.ed.tdas.Position;
+import ar.edu.uns.cs.ed.tdas.tdadiccionario.Dictionary;
 import ar.edu.uns.cs.ed.tdas.tdalista.PositionList;
 import ar.edu.uns.cs.ed.tdas.tdalista.TdaLista;
 import ar.edu.uns.cs.ed.tdas.excepciones.*;
@@ -194,24 +197,21 @@ public class TdaArbolBinario<E> implements BinaryTree<E>{
     public void removeInternalNode(Position<E> p) {
         BTNodo<E> nodo = checkPosition(p);
         if(raiz == nodo){
-            boolean hl = hasLeft(raiz);
-            boolean hr = hasRight(raiz);
-            if(hl && hr){ throw new InvalidPositionException("La posicion es la raiz y cuenta con mas de un hijo");}
-            if(hl && !hr){raiz.getHijoI().setPadre(null);
-                raiz = raiz.getHijoI();
+            if(isExternal(nodo)){throw new InvalidPositionException("la posicion es la raiz y no cuenta con ningun hijo");}
+            if(hasLeft(raiz) && hasLeft(raiz)){ throw new InvalidPositionException("La posicion es la raiz y cuenta con mas de un hijo");}
+            else{
+                for (Position<E> h : children(raiz)) { // lo reemplaza por su unico hijo
+                    raiz = checkPosition(h);
+                    break;
+                };
             }
-            if(!hl && hr){raiz.getHijoD().setPadre(null);
-                raiz = raiz.getHijoD();}
-        
         }   
         else{
             if(isInternal(p)){
             BTNodo<E> padre = checkPosition(parent(nodo));
-            boolean hl = hasLeft(nodo);
-            boolean hr = hasRight(nodo);
             Iterable<Position<E>> pos = children(nodo);
             if(padre.getHijoD() == nodo){
-                for(Position<E> i : pos){
+                for(Position<E> i : pos){ // lo remeplaza por el unico hijo q tenga o en su defecto por el izquierdo si tiene los dos
                     BTNodo<E> pi = checkPosition(i);
                     padre.setHijoD(pi);
                     pi.setPadre(padre);
@@ -219,7 +219,7 @@ public class TdaArbolBinario<E> implements BinaryTree<E>{
                 }
             }
             if(padre.getHijoI() == nodo){
-                for(Position<E> i : pos){
+                for(Position<E> i : pos){// lo remeplaza por el unico hijo q tenga o en su defecto por el izquierdo si tiene los dos
                     BTNodo<E> pi = checkPosition(i);
                     padre.setHijoI(pi);
                     pi.setPadre(padre);
@@ -228,11 +228,90 @@ public class TdaArbolBinario<E> implements BinaryTree<E>{
                 
             }
             }
+            else{throw new InvalidPositionException("no es un nodo interno");}
 
         }
     }
     @Override
     public boolean isRoot(Position<E> v) {
         return checkPosition(v) == raiz;
+    }
+    public Position<E> addAfter(Position<E> pos, Position<E> lb, E element) {
+        BTNodo<E> nodo = checkPosition(pos);
+        BTNodo<E> nodoHijo = checkPosition(lb);
+        if (nodo.getHijoI() != nodoHijo) {
+            throw new InvalidPositionException("lb no es el hijo izquierdo de p.");
+        }
+        return addRight(pos, element);
+    }
+
+     public Position<E> addBefore(Position<E> pos, Position<E> rb, E element) {
+        if (pos == null || rb == null) {
+            throw new InvalidPositionException("Posición nula.");
+        }
+        BTNodo<E> nodo = checkPosition(pos);
+        BTNodo<E> nodoHijo = checkPosition(rb);
+        if (nodo.getHijoD() != nodoHijo) {
+            throw new InvalidPositionException("rb no es el hijo derecho de p.");
+        }
+        return addLeft(pos, element);
+    }
+
+    @Override
+    public void removeNode(Position<E> p) {
+        if(isExternal(p)){
+            removeExternalNode(p);
+        }
+        else{removeInternalNode(p);}
+    }
+
+    public Dictionary<E,BTNodo<E>> Ej2(){
+        Dictionary<E,BTNodo<E>> toret = new TdaDiccionario<E, BTNodo<E>>();
+        if(!isEmpty()){
+            preOrdenEj2(toret, raiz);
+        }
+        return toret;
+    }
+
+    private void preOrdenEj2(Dictionary<E,BTNodo<E>> d, BTNodo<E> n){
+        if(isInternal(n)){
+            d.insert(n.getPadre().element(), n);
+            for(Position<E> hijo : children(n)){
+                preOrdenEj2(d,checkPosition(hijo));
+            }
+        }
+    }
+    
+    public static Iterable<Character> Ej3(BinaryTree<Character> A){
+        PositionList<Character> toret = new TdaLista<Character>();
+        if(!A.isEmpty()){
+            inOrdenEj3(toret, A.root(), A);
+        }
+        return toret;
+    }
+
+    private static void inOrdenEj3 (PositionList<Character> l, Position<Character> n, BinaryTree<Character> A){
+        if(A.isInternal(n)){
+            l.addLast('(');
+            Position<Character> iz = A.left(n);
+            inOrdenEj3(l, iz, A);
+            //visita
+            l.addLast(n.element());
+            Position<Character> de = A.right(n);
+            inOrdenEj3(l,de,A);
+            l.addLast(')');
+        }
+        else{
+            l.addLast(n.element());
+        }
+    }
+
+    public void completarDerechos(E r, BinaryTree<E> t){
+        if(t.isEmpty()){throw new EmptyTreeException("arbol vacio");} // O(1)
+        for (Position<E> e : t.positions()) {    // O(n)
+            if(t.hasLeft(e) && !t.hasRight(e)){
+                t.addRight(e, r);
+            }
+        }
     }
 }
