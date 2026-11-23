@@ -94,6 +94,18 @@ public class TdaDiccionario<K,V> implements Dictionary<K,V>{
         return toret;
         
     }
+    //practica parcial
+    public int cantEntradas(K key, V value){
+	int hashkey = key.hashCode()%N;
+	int toret = 0;
+	for(Entrada<K,V> e : buckets[hashkey]){
+		if(e.getKey().equals(key)){ toret++;}
+	}
+	return toret;
+    
+    }
+
+    
 
 
 

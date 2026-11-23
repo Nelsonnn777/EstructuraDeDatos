@@ -314,4 +314,28 @@ public class TdaArbolBinario<E> implements BinaryTree<E>{
             }
         }
     }
+
+    public void eliminarSubArbol(Position<E> p){
+        BTNodo<E> nodo = checkPosition(p);
+        cantidad = cantidad - contarPreOrden(nodo);
+        if(isRoot(nodo)){raiz = null;}
+        else{
+            BTNodo<E> padre = checkPosition(parent(nodo));
+            if(padre.getHijoD() == nodo){
+                padre.setHijoD(null);
+            }
+            else{padre.setHijoI(null);}
+            
+        }
+    }
+
+    private int contarPreOrden(Position<E> n){
+        int s= 1;
+        if(isInternal(n)){
+            for(Position<E> h: children(n)){
+                s = s+ contarPreOrden(h);
+            }
+        }
+        return s;
+    }
 }
